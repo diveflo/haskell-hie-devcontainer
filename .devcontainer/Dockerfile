@@ -58,8 +58,8 @@ RUN echo ". ${NIXPROF}/etc/profile.d/nix.sh" >> ~/.profile \
 
 ENTRYPOINT ["/bin/zsh"]
 
-COPY --chown=${USERNAME}:${USERNAME} stack-config.yaml /home/${USERNAME}/.stack/config.yaml
-COPY --chown=${USERNAME}:${USERNAME} stack-global-config.yaml /home/${USERNAME}/.stack/global-project/stack.yaml
+COPY --chown=${USER_UID}:${USER_GID} stack-config.yaml /home/${USERNAME}/.stack/config.yaml
+COPY --chown=${USER_UID}:${USER_GID} stack-global-config.yaml /home/${USERNAME}/.stack/global-project/stack.yaml
 
 RUN nix-env -i stack
 RUN nix-env -i ghc-8.6.5
