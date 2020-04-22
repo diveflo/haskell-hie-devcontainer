@@ -58,11 +58,22 @@ RUN echo ". ${NIXPROF}/etc/profile.d/nix.sh" >> ~/.profile \
 
 ENTRYPOINT ["/bin/zsh"]
 
-COPY --chown=${USER_UID}:${USER_GID} stack-config.yaml /home/${USERNAME}/.stack/config.yaml
-COPY --chown=${USER_UID}:${USER_GID} stack-global-config.yaml /home/${USERNAME}/.stack/global-project/stack.yaml
+ARG USERNAME=vscode
+ARG USER_UID=1000
+ARG USER_GID=$USER_UID
+
+COPY stack-config.yaml /home/${USERNAME}/.stack/config.yaml
+COPY stack-global-config.yaml /home/${USERNAME}/.stack/global-project/stack.yaml
+
+RUN sudo chown ${USERNAME}:${USERNAME} /home/${USERNAME}/.stack/config.yaml
+RUN sudo chown ${USERNAME}:${USERNAME} /home/${USERNAME}/.stack/global-project/stack.yaml
+
+RUN sudo chown -R ${USERNAME}:${USERNAME} /home/${USERNAME}/.stack
 
 RUN nix-env -i stack
-RUN nix-env -i ghc-8.6.5
+RUN nix-env -i ghc
+
+RUN mkdir /home/${USERNAME}/.stack/pantry
 
 RUN nix-env -iA cachix -f https://cachix.org/api/v1/install  \
     && cachix use all-hies \
